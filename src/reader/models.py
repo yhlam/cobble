@@ -1,5 +1,7 @@
 from django.db import models
 
+import jsonfield
+
 
 class Feed(models.Model):
     name = models.CharField(max_length=1024)
@@ -18,6 +20,7 @@ class Entry(models.Model):
     content = models.TextField()
     link = models.URLField()
     time = models.DateTimeField()
+    json = jsonfield.JSONField()
 
     class Meta:
         unique_together = (('feed', 'entry_id'),)

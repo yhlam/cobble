@@ -91,6 +91,7 @@ def _process_entry(feed, entry):
             'title': title,
             'content': content,
             'link': link,
+            'json': entry,
         }
     )
 
