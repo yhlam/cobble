@@ -1,4 +1,4 @@
-cobble
+Cobble
 ======
 
 A web-based RSS Aggregator
