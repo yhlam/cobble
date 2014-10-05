@@ -1,0 +1,28 @@
+{
+  "name": "cobble",
+  "version": "0.1.0",
+  "authors": [
+    "Hei <lamyuenhei@gmail.com>"
+  ],
+  "description": "A web-based RSS Aggregator",
+  "keywords": [
+    "rss"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "static/vendor",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-bootstrap": "~0.11.2",
+    "bootstrap": "~3.2.0",
+    "ngInfiniteScroll": "1.0.0",
+    "angular-moment": "~0.8.2",
+    "angular-sanitize": "~1.2.26",
+  }
+}

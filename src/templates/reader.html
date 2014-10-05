@@ -1,0 +1,63 @@
+{% load staticfiles %}
+<!doctype html>
+<html lang="en" ng-app="readerApp">
+<head>
+  <meta charset="utf-8">
+  <title>cobble</title>
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap/dist/css/bootstrap.css' %}">
+  <link rel="stylesheet" href="{% static 'css/reader.css' %}">
+  <script src="{% static 'vendor/jquery/dist/jquery.min.js' %}"></script>
+  <script src="{% static 'vendor/angular/angular.min.js' %}"></script>
+  <script src="{% static 'vendor/angular-sanitize/angular-sanitize.min.js' %}"></script>
+  <script src="{% static 'vendor/ngInfiniteScroll/build/ng-infinite-scroll.min.js' %}"></script>
+  <script src="{% static 'vendor/moment/min/moment.min.js' %}"></script>
+  <script src="{% static 'vendor/angular-moment/angular-moment.min.js' %}"></script>
+  <script src="{% static 'js/reader.js' %}"></script>
+</head>
+<body>
+  <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">cobble</a>
+      </div>
+    </div>
+  </div>
+  <div class="container" ng-controller="readerController">
+    <div infinite-scroll="poll()" infinite-scroll-disabled="loading" infinite-scroll-distance="1">
+      {% verbatim %}
+      <div class="row entry-close" ng-repeat-start="entry in entries" ng-show="!entry.open">
+        <div class="col-md-2 entry-close-feed">{{entry.feed}}</div>
+        <div class="col-md-8 entry-close-title">
+          <a ng-href="{{entry.link}}" target="_blank">{{entry.title}}</a>
+        </div>
+        <div class="col-md-2 text-right" am-time-ago="entry.time"></div>
+      </div>
+      <div class="row entry-open" ng-repeat-end ng-show="entry.open">
+        <div class="col-md-10 col-md-offset-1">
+          <div class="row">
+            <div class="col-md-12 entry-open-title">
+              <a ng-href="{{entry.link}}" target="_blank"><h3>{{entry.title}}</h3></a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <small class="entry-open-feed">{{entry.feed}}</small>
+              <small class="entry-open-time pull-right">{{entry.time | amDateFormat:"DD-MM-YYYY hh:mm:ss"}}</small>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 entry-open-content" ng-bind-html="entry.content"></div>
+          </div>
+        </div>
+      </div>
+      {% endverbatim %}
+      <div class="row" ng-show="loading && !done">
+        <div class="col-md-12 alert alert-info message">Loading...</div>
+      </div>
+      <div class="row" ng-show="done">
+        <div class="col-md-12 alert alert-info message">All entries are shown</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

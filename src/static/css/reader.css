@@ -1,0 +1,40 @@
+body {
+    padding-top: 60px;
+}
+
+.entry-close {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-top: #EEEEEE 1px solid;
+}
+
+.entry-open {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border: #EEEEEE 1px solid;
+}
+
+.entry-close-feed {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.entry-open-title {
+    border-bottom: #EEEEEE 1px solid;
+}
+
+.entry-open-content {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.entry-open-content img {
+    display: block;
+    margin: 5px;
+}
+
+.message {
+    margin-top: 10px;
+}

@@ -58,3 +58,6 @@ target/
 
 # dev db
 *.sqlite3
+
+# bower packages
+src/static/vendor/
