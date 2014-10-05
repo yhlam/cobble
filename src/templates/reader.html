@@ -5,13 +5,16 @@
   <meta charset="utf-8">
   <title>cobble</title>
   <link rel="stylesheet" href="{% static 'vendor/bootstrap/dist/css/bootstrap.css' %}">
+  <link rel="stylesheet" href="{% static 'vendor/angular-hotkeys/build/hotkeys.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/reader.css' %}">
   <script src="{% static 'vendor/jquery/dist/jquery.min.js' %}"></script>
   <script src="{% static 'vendor/angular/angular.min.js' %}"></script>
   <script src="{% static 'vendor/angular-sanitize/angular-sanitize.min.js' %}"></script>
+  <script src="{% static 'vendor/angular-touch/angular-touch.min.js' %}"></script>
   <script src="{% static 'vendor/ngInfiniteScroll/build/ng-infinite-scroll.min.js' %}"></script>
   <script src="{% static 'vendor/moment/min/moment.min.js' %}"></script>
   <script src="{% static 'vendor/angular-moment/angular-moment.min.js' %}"></script>
+  <script src="{% static 'vendor/angular-hotkeys/build/hotkeys.min.js' %}"></script>
   <script src="{% static 'js/reader.js' %}"></script>
 </head>
 <body>
@@ -25,14 +28,25 @@
   <div class="container" ng-controller="readerController">
     <div infinite-scroll="poll()" infinite-scroll-disabled="loading" infinite-scroll-distance="1">
       {% verbatim %}
-      <div class="row entry-close" ng-repeat-start="entry in entries" ng-show="!entry.open">
+      <div
+        class="row entry-close"
+        ng-repeat-start="entry in entries"
+        ng-show="selected != $index || !open"
+        ng-class="{'entry-selected': $index === selected}"
+        ng-click="openOrClose($index)"
+        reader-scroll-to="selected == $index && !open">
         <div class="col-md-2 entry-close-feed">{{entry.feed}}</div>
         <div class="col-md-8 entry-close-title">
           <a ng-href="{{entry.link}}" target="_blank">{{entry.title}}</a>
         </div>
         <div class="col-md-2 text-right" am-time-ago="entry.time"></div>
       </div>
-      <div class="row entry-open" ng-repeat-end ng-show="entry.open">
+      <div
+        class="row entry-open"
+        ng-repeat-end
+        ng-show="selected == $index && open"
+        ng-click="openOrClose($index)"
+        reader-scroll-to="selected == $index && open">
         <div class="col-md-10 col-md-offset-1">
           <div class="row">
             <div class="col-md-12 entry-open-title">

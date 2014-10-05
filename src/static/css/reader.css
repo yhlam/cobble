@@ -35,6 +35,10 @@ body {
     margin: 5px;
 }
 
+.entry-selected {
+    background-color: #F7F8E0;
+}
+
 .message {
     margin-top: 10px;
 }
