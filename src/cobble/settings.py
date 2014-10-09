@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'rest_framework',
 
     'reader',
+    'utils',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -91,9 +92,3 @@ STATICFILES_DIRS = (
 
 
 TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates'),)
-
-
-# Django Rest Framework
-REST_FRAMEWORK = {
-    'PAGINATE_BY': 10
-}

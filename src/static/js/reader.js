@@ -8,7 +8,7 @@ readerApp.controller("readerController", ["$scope", "$http", "$window", "hotkeys
     $scope.entries = [];
     $scope.loading = false;
     $scope.done = false;
-    $scope.nextUrl = "/api/v1/entry";
+    $scope.offset = 0;
     $scope.selected = 0;
     $scope.open = false;
 
@@ -18,11 +18,18 @@ readerApp.controller("readerController", ["$scope", "$http", "$window", "hotkeys
       }
       $scope.loading = true;
 
-      $http.get($scope.nextUrl).success(function(data) {
+      $scope.last_updated = $scope.last_updated || new Date().toISOString();
+
+      $http.get("/api/v1/entry/", {
+        params: {
+          last_updated: $scope.last_updated,
+          offset: $scope.offset,
+          limit: 50,
+        },
+      }).success(function(data) {
         var i, entry;
-        var results = data.results;
-        for(i=0; i<results.length; i++) {
-          entry = results[i];
+        for(i=0; i<data.length; i++) {
+          entry = data[i];
           $scope.entries.push({
             feed: entry.feed,
             title: entry.title,
@@ -31,10 +38,10 @@ readerApp.controller("readerController", ["$scope", "$http", "$window", "hotkeys
             link: entry.link,
           });
         }
-        $scope.nextUrl = data.next;
 
+        $scope.offset += data.length;
         $scope.loading = false;
-        if(data.next == null) {
+        if(data.length <= 0) {
           $scope.done = true;
         }
       });
@@ -50,16 +57,21 @@ readerApp.controller("readerController", ["$scope", "$http", "$window", "hotkeys
       }
     };
 
+    $scope.setMode = function(mode) {
+      $scope.mode = mode;
+    }
+
     hotkeys.add({
       combo: "r",
       description: "Refresh",
       callback: function() {
         $scope.done = false;
         $scope.loading = false;
-        $scope.nextUrl = "/api/v1/entry";
         $scope.selected = 0;
         $scope.open = false;
         $scope.entries = [];
+        $scope.offset = 0;
+        delete $scope.last_updated;
         $scope.poll();
       },
     });

@@ -21,6 +21,7 @@ class Migration(migrations.Migration):
                 ('link', models.URLField()),
                 ('time', models.DateTimeField()),
                 ('json', jsonfield.fields.JSONField()),
+                ('updated', models.DateTimeField(auto_now=True)),
             ],
             options={
                 'verbose_name_plural': 'entries',

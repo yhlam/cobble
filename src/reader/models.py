@@ -21,6 +21,7 @@ class Entry(models.Model):
     link = models.URLField()
     time = models.DateTimeField()
     json = jsonfield.JSONField()
+    updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = (('feed', 'entry_id'),)
