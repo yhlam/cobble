@@ -22,6 +22,7 @@ class Migration(migrations.Migration):
                 ('time', models.DateTimeField()),
                 ('json', jsonfield.fields.JSONField()),
                 ('updated', models.DateTimeField(auto_now=True)),
+                ('read', models.BooleanField(default=False)),
             ],
             options={
                 'verbose_name_plural': 'entries',

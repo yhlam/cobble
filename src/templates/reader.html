@@ -15,17 +15,40 @@
   <script src="{% static 'vendor/moment/min/moment.min.js' %}"></script>
   <script src="{% static 'vendor/angular-moment/angular-moment.min.js' %}"></script>
   <script src="{% static 'vendor/angular-hotkeys/build/hotkeys.min.js' %}"></script>
+  <script src="{% static 'vendor/angular-bootstrap/ui-bootstrap.min.js' %}"></script>
   <script src="{% static 'js/reader.js' %}"></script>
 </head>
-<body>
+<body ng-controller="readerController">
   <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container">
+
       <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
         <a class="navbar-brand" href="#">cobble</a>
       </div>
+
+      <div class="collapse navbar-collapse">
+            {% verbatim %}
+            <div class="btn-group navbar-btn navbar-right" dropdown>
+              <button type="button" class="btn btn-primary dropdown-toggle mode-dropdown" ng-disabled="disabled">
+                <span class="mode-dropdown-text">{{mode}}</span><span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li ng-repeat="mode in modes"><a ng-click="setMode(mode)">{{mode}}</a></li>
+              </ul>
+            </div>
+            {% endverbatim %}
+      </div>
+
     </div>
   </div>
-  <div class="container" ng-controller="readerController">
+
+  <div class="container">
     <div infinite-scroll="poll()" infinite-scroll-disabled="loading" infinite-scroll-distance="1">
       {% verbatim %}
       <div
@@ -37,7 +60,7 @@
         reader-scroll-to="selected == $index && !open">
         <div class="col-md-2 entry-close-feed">{{entry.feed}}</div>
         <div class="col-md-8 entry-close-title">
-          <a ng-href="{{entry.link}}" target="_blank">{{entry.title}}</a>
+          <a ng-href="{{entry.link}}" target="_blank" ng-class="{'entry-read': entry.read}">{{entry.title}}</a>
         </div>
         <div class="col-md-2 text-right" am-time-ago="entry.time"></div>
       </div>
@@ -47,7 +70,8 @@
         ng-show="selected == $index && open"
         ng-click="openOrClose($index)"
         reader-scroll-to="selected == $index && open">
-        <div class="col-md-10 col-md-offset-1">
+        <div class="col-md-10 col-md-offset-1 entry-open-container"
+          ng-click="$event.stopPropagation()">
           <div class="row">
             <div class="col-md-12 entry-open-title">
               <a ng-href="{{entry.link}}" target="_blank"><h3>{{entry.title}}</h3></a>
@@ -61,6 +85,17 @@
           </div>
           <div class="row">
             <div class="col-md-12 entry-open-content" ng-bind-html="entry.content"></div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+              <a class="btn btn-primary btn-block" role="button" ng-href="{{entry.link}}">Open</a>
+            </div>
+          </div>
+          <div class="row entry-open-footer">
+            <div class="col-md-12">
+              <a href="#" ng-if="!entry.read" ng-click="setRead(entry, true)">Mark as Read</a>
+              <a href="#" ng-if="entry.read" ng-click="setRead(entry, false)">Mark as Unread</a>
+            </div>
           </div>
         </div>
       </div>

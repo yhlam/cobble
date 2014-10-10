@@ -8,4 +8,8 @@ class EntrySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Entry
-        fields = ('feed', 'title', 'content', 'link', 'time')
+        fields = ('id', 'feed', 'title', 'content', 'link', 'time', 'read')
+
+
+class SuccessSerializer(serializers.Serializer):
+    success = serializers.BooleanField(read_only=True)

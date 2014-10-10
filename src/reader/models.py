@@ -22,6 +22,7 @@ class Entry(models.Model):
     time = models.DateTimeField()
     json = jsonfield.JSONField()
     updated = models.DateTimeField(auto_now=True)
+    read = models.BooleanField(default=False)
 
     class Meta:
         unique_together = (('feed', 'entry_id'),)
