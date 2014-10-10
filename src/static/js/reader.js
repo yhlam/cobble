@@ -128,43 +128,111 @@ readerApp.controller("readerController", ["$scope", "$http", "$window", "hotkeys
     hotkeys.add({
       combo: "r",
       description: "Refresh",
-      callback: $scope.refresh,
+      callback: function(event) {
+        $scope.refresh();
+
+        event.preventDefault();
+      }
     });
 
     hotkeys.add({
       combo: "j",
       description: "Down",
-      callback: function() {
+      callback: function(event) {
         var max_index = $scope.entries.length - 1;
         $scope.selected = $scope.selected >= max_index ? max_index : $scope.selected + 1;
         $scope.markSelectedAsRead();
+
+        event.preventDefault();
       },
     });
 
     hotkeys.add({
       combo: "k",
       description: "Up",
-      callback: function() {
+      callback: function(event) {
         $scope.selected = $scope.selected <= 0 ? 0 : $scope.selected - 1;
         $scope.markSelectedAsRead();
+
+        event.preventDefault();
+      },
+    });
+
+    hotkeys.add({
+      combo: "g g",
+      description: "Go to the top",
+      callback: function(event) {
+        $scope.selected = 0;
+        $scope.markSelectedAsRead();
+
+        event.preventDefault();
+      },
+    });
+
+    hotkeys.add({
+      combo: "shift+g",
+      description: "Go to the first unread / bottom",
+      callback: function(event) {
+        var entries = $scope.entries;
+        var length = entries.length;
+        for(var i=0; i<length; i++) {
+          var entry = entries[i];
+          if(!entry.read) {
+            break;
+          }
+        }
+        $scope.selected = i;
+        $scope.markSelectedAsRead();
+
+        event.preventDefault();
+      },
+    });
+
+    hotkeys.add({
+      combo: "ctrl+u",
+      description: "Jump 10 entries up",
+      callback: function(event) {
+        var target = Math.max($scope.selected - 10, 0);
+        for(var i=$scope.selected; i>=target; i--) {
+          $scope.setRead($scope.entries[i], true);
+        }
+        $scope.selected = target;
+
+        event.preventDefault();
+      },
+    });
+
+    hotkeys.add({
+      combo: "ctrl+d",
+      description: "Jump 10 entries down",
+      callback: function(event) {
+        var target = Math.min($scope.selected + 10, $scope.entries.length - 1);
+        for(var i=$scope.selected; i<=target; i++) {
+          $scope.setRead($scope.entries[i], true);
+        }
+        $scope.selected = target;
+
+        event.preventDefault();
       },
     });
 
     hotkeys.add({
       combo: "o",
-      description: "Toggle Open",
-      callback: function() {
+      description: "Toggle open",
+      callback: function(event) {
         $scope.open = !$scope.open;
         if($scope.open) {
           $scope.markSelectedAsRead();
         }
+
+        event.preventDefault();
       },
     });
 
     hotkeys.add({
       combo: "p",
-      description: "Open in New Tab",
-      callback: function() {
+      description: "Open in new Tab",
+      callback: function(event) {
         var entry = $scope.entries[$scope.selected];
         var isChrome = $window.navigator.userAgent.toLowerCase().indexOf('chrome') >= 0;
         if(isChrome) {
@@ -177,15 +245,19 @@ readerApp.controller("readerController", ["$scope", "$http", "$window", "hotkeys
         else {
           $window.open(entry.link)
         }
+
+        event.preventDefault();
       },
     });
 
     hotkeys.add({
       combo: "m",
-      description: "Mark as Read / Unread",
-      callback: function() {
+      description: "Mark as read / unread",
+      callback: function(event) {
         var entry = $scope.entries[$scope.selected];
         $scope.setRead(entry, !entry.read);
+
+        event.preventDefault();
       },
     });
 
