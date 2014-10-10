@@ -1,10 +1,16 @@
 from rest_framework import serializers
 
-from .models import Entry
+from .models import Entry, Feed
+
+
+class FeedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Feed
+        fields = ('name', 'homepage')
 
 
 class EntrySerializer(serializers.ModelSerializer):
-    feed = serializers.SlugRelatedField(read_only=True, slug_field='name')
+    feed = FeedSerializer(read_only=True)
 
     class Meta:
         model = Entry

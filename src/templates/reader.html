@@ -55,14 +55,16 @@
         class="row entry-close"
         ng-repeat-start="entry in entries"
         ng-show="selected != $index || !open"
-        ng-class="{'entry-selected': $index === selected}"
+        ng-class="{'entry-selected': $index === selected, 'entry-read': entry.read}"
         ng-click="openOrClose($index)"
         reader-scroll-to="selected == $index && !open">
-        <div class="col-md-2 entry-close-feed">{{entry.feed}}</div>
-        <div class="col-md-8 entry-close-title">
-          <a ng-href="{{entry.link}}" target="_blank" ng-class="{'entry-read': entry.read}">{{entry.title}}</a>
+        <div class="col-md-2 entry-close-feed">
+          <a ng-href="{{entry.feed.link}}" target="_blank">{{entry.feed.name}}</a>
         </div>
-        <div class="col-md-2 text-right" am-time-ago="entry.time"></div>
+        <div class="col-md-8 entry-close-title">
+          <a ng-href="{{entry.link}}" target="_blank">{{entry.title}}</a>
+        </div>
+        <div class="col-md-2 text-right entry-close-time" am-time-ago="entry.time"></div>
       </div>
       <div
         class="row entry-open"
@@ -79,7 +81,7 @@
           </div>
           <div class="row">
             <div class="col-md-12">
-              <small class="entry-open-feed">{{entry.feed}}</small>
+              <small class="entry-open-feed"><a ng-href="{{entry.feed.link}}">{{entry.feed.name}}</a></small>
               <small class="entry-open-time pull-right">{{entry.time | amDateFormat:"DD-MM-YYYY hh:mm:ss"}}</small>
             </div>
           </div>

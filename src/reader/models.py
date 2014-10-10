@@ -6,6 +6,7 @@ import jsonfield
 class Feed(models.Model):
     name = models.CharField(max_length=1024)
     url = models.URLField()
+    homepage = models.URLField()
     etag = models.CharField(max_length=1024, blank=True)
     last_modified = models.DateTimeField(blank=True, null=True)
 

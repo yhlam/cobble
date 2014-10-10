@@ -12,8 +12,13 @@ body {
     min-width: 130px;
 }
 
+.entry-close-feed > a {
+    color: #555555;
+}
 
-.entry-read {
+.entry-read > .entry-close-feed > a,
+.entry-read > .entry-close-title > a,
+.entry-read > .entry-close-time {
     color: #888888;
 }
 
@@ -43,6 +48,14 @@ body {
 
 .entry-open-title {
     border-bottom: #EEEEEE 1px solid;
+}
+
+.entry-open-feed > a {
+    color: #888888;
+}
+
+.entry-open-time {
+    color: #888888;
 }
 
 .entry-open-content {

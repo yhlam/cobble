@@ -36,6 +36,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(primary_key=True, auto_created=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=1024)),
                 ('url', models.URLField()),
+                ('homepage', models.URLField()),
                 ('etag', models.CharField(blank=True, max_length=1024)),
                 ('last_modified', models.DateTimeField(null=True, blank=True)),
             ],

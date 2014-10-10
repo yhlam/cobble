@@ -54,7 +54,10 @@ readerApp.controller("readerController", ["$scope", "$http", "$window", "hotkeys
           entry = data[i];
           $scope.entries.push({
             id: entry.id,
-            feed: entry.feed,
+            feed: {
+              name: entry.feed.name,
+              link: entry.feed.homepage,
+            },
             title: entry.title,
             time: new Date(entry.time),
             content: entry.content,
