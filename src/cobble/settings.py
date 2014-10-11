@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'crispy_forms',
 
     'reader',
     'utils',
@@ -92,3 +93,6 @@ STATICFILES_DIRS = (
 
 
 TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates'),)
+
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'

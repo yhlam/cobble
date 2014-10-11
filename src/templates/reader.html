@@ -33,16 +33,25 @@
       </div>
 
       <div class="collapse navbar-collapse">
-            {% verbatim %}
-            <div class="btn-group navbar-btn navbar-right" dropdown>
-              <button type="button" class="btn btn-primary dropdown-toggle mode-dropdown" ng-disabled="disabled">
-                <span class="mode-dropdown-text">{{mode}}</span><span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" role="menu">
-                <li ng-repeat="mode in modes"><a ng-click="setMode(mode)">{{mode}}</a></li>
-              </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+          {% verbatim %}
+          <div class="btn-group navbar-btn" dropdown>
+            <button type="button" class="btn btn-default dropdown-toggle mode-dropdown" ng-disabled="disabled">
+              <span class="mode-dropdown-text">{{mode}}</span><span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+              <li ng-repeat="mode in modes"><a ng-click="setMode(mode)">{{mode}}</a></li>
+            </ul>
+          </div>
+          {% endverbatim %}
+          </li>
+          <li class="logout-button">
+            <div class="btn-group navbar-btn" dropdown>
+              <a class="btn btn-primary" href="{% url 'logout' %}">Logout</a>
             </div>
-            {% endverbatim %}
+          </li>
+        </ul>
       </div>
 
     </div>
