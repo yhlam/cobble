@@ -1,6 +1,7 @@
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import REDIRECT_FIELD_NAME, login, logout
 from django.core.urlresolvers import reverse, reverse_lazy
+from django.db.models import Q
 from django.views.generic import TemplateView, RedirectView
 from django.views.generic.edit import FormView
 from django.utils.http import is_safe_url
@@ -16,7 +17,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import ISO_8601
 
-
 from utils.filters import IsoDateTimeFilter
 from .models import Entry
 from .serializers import EntrySerializer, SuccessSerializer
@@ -29,7 +29,12 @@ class EntryFilterSet(django_filters.FilterSet):
         input_formats=(ISO_8601,),
     )
 
-    read = django_filters.BooleanFilter()
+    read = django_filters.BooleanFilter(
+        action=lambda qs, value: (
+            qs.filter(user_state__read=True) if value
+            else qs.filter(Q(user_state=None) | Q(user_state__read=False))
+        ),
+    )
 
     offset = django_filters.NumberFilter(
         decimal_places=0,
@@ -51,11 +56,14 @@ class EntryFilterSet(django_filters.FilterSet):
 
 
 class EntryListAPIView(ListAPIView):
-    queryset = Entry.objects.all()
     serializer_class = EntrySerializer
     filter_class = EntryFilterSet
     filter_backends = (DjangoFilterBackend,)
     permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+        return Entry.objects.filter(feed__subscribers=user)
 
 
 class UpdateReadAPIView(GenericAPIView):
@@ -66,8 +74,15 @@ class UpdateReadAPIView(GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         entry = self.get_object()
-        entry.read = self.read
-        entry.save()
+        user = request.user
+        entry.user_states.update_or_create(
+            user=user,
+            defaults={
+                'user': user,
+                'entry': entry,
+                'read': self.read
+            },
+        )
         return Response({'success': True})
 
 
