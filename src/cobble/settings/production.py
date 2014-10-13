@@ -25,3 +25,7 @@ DATABASES = {
     # Parse database configuration from $DATABASE_URL
     'default': dj_database_url.config(),
 }
+
+
+# Celery settings
+BROKER_URL = os.environ['BROKER_URL']

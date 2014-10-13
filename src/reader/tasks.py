@@ -9,6 +9,7 @@ from django.utils import timezone
 
 import aiohttp
 from aiohttp.errors import ConnectionError, HttpException
+from celery import shared_task
 import feedparser
 
 from .models import Feed, Entry
@@ -23,10 +24,12 @@ FeedResponse = namedtuple(
 )
 
 
+@shared_task(ignore_result=True)
 def load_all_feeds():
     _load_feeds(Feed.objects.all())
 
 
+@shared_task(ignore_result=True)
 def load_feed(feed):
     _load_feeds((feed,))
 

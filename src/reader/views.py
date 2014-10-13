@@ -13,13 +13,16 @@ from crispy_forms.layout import Layout, Field
 from crispy_forms.bootstrap import StrictButton
 from rest_framework.generics import ListAPIView, GenericAPIView
 from rest_framework.filters import DjangoFilterBackend
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework import ISO_8601
+from rest_framework import status
 
 from utils.filters import IsoDateTimeFilter
 from .models import Entry
 from .serializers import EntrySerializer, SuccessSerializer
+from . import tasks
 
 
 class EntryFilterSet(django_filters.FilterSet):
@@ -84,6 +87,14 @@ class UpdateReadAPIView(GenericAPIView):
             },
         )
         return Response({'success': True})
+
+
+class FetchAPIView(APIView):
+    permission_classes = (IsAdminUser,)
+
+    def post(self, request, *args, **kwargs):
+        tasks.load_all_feeds.delay()
+        return Response(status=status.HTTP_202_ACCEPTED)
 
 
 class ReaderView(LoginRequiredMixin, TemplateView):

@@ -25,6 +25,8 @@ INSTALLED_APPS = (
 
     'rest_framework',
     'crispy_forms',
+    'djcelery',
+    'kombu.transport.django',
 
     'reader',
     'utils',
@@ -72,3 +74,8 @@ TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates'),)
 
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+
+# Celery settings
+CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
