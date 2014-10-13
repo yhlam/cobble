@@ -41,3 +41,14 @@ class EntrySerializer(serializers.ModelSerializer):
 
 class SuccessSerializer(serializers.Serializer):
     success = serializers.BooleanField(read_only=True)
+
+
+class FetchOptionSerializer(serializers.Serializer):
+    async = serializers.ChoiceField(
+        choices=(
+            ('T', 'True'),
+            ('F', 'False'),
+        ),
+        blank_display_value='T',
+        write_only=True,
+    )

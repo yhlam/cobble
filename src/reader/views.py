@@ -15,13 +15,14 @@ from rest_framework.generics import ListAPIView, GenericAPIView
 from rest_framework.filters import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework import ISO_8601
 from rest_framework import status
 
 from utils.filters import IsoDateTimeFilter
 from .models import Entry
-from .serializers import EntrySerializer, SuccessSerializer
+from .serializers import (
+    EntrySerializer, SuccessSerializer, FetchOptionSerializer
+)
 from . import tasks
 
 
@@ -89,12 +90,21 @@ class UpdateReadAPIView(GenericAPIView):
         return Response({'success': True})
 
 
-class FetchAPIView(APIView):
+class FetchAPIView(GenericAPIView):
+    serializer_class = FetchOptionSerializer
     permission_classes = (IsAdminUser,)
 
     def post(self, request, *args, **kwargs):
-        tasks.load_all_feeds.delay()
-        return Response(status=status.HTTP_202_ACCEPTED)
+        serializer = self.get_serializer(data=request.DATA)
+
+        if serializer.is_valid():
+            if serializer.object['async'] == 'T':
+                tasks.load_all_feeds.delay()
+            else:
+                tasks.load_all_feeds()
+            return Response(status=status.HTTP_202_ACCEPTED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ReaderView(LoginRequiredMixin, TemplateView):
