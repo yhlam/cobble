@@ -25,7 +25,7 @@ class Entry(models.Model):
     entry_id = models.CharField(max_length=1024)
     title = models.CharField(max_length=1024)
     content = models.TextField()
-    link = models.URLField()
+    link = models.URLField(max_length=1024)
     time = models.DateTimeField()
     json = jsonfield.JSONField()
     updated = models.DateTimeField(auto_now=True)
