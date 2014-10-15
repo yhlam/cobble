@@ -88,6 +88,8 @@ readerApp.controller("readerController", ["$scope", "$http", "$window", "hotkeys
       else{
         $scope.selected = $index;
         $scope.open = true;
+        var entry = $scope.entries[$index];
+        $scope.setExpanded(entry);
         $scope.markSelectedAsRead();
       }
     };
@@ -121,8 +123,16 @@ readerApp.controller("readerController", ["$scope", "$http", "$window", "hotkeys
     }
 
     $scope.markSelectedAsRead = function() {
-        var entry = $scope.entries[$scope.selected];
-        $scope.setRead(entry, true);
+      var entry = $scope.entries[$scope.selected];
+      $scope.setRead(entry, true);
+    }
+
+    $scope.setExpanded = function(entry) {
+      $http.post("/api/v1/entry/" + entry.id + "/expanded/");
+    }
+
+    $scope.setOpened = function(entry) {
+      $http.post("/api/v1/entry/" + entry.id + "/opened/");
     }
 
     hotkeys.add({
@@ -222,6 +232,8 @@ readerApp.controller("readerController", ["$scope", "$http", "$window", "hotkeys
       callback: function(event) {
         $scope.open = !$scope.open;
         if($scope.open) {
+          var entry = $scope.entries[$scope.selected];
+          $scope.setExpanded(entry);
           $scope.markSelectedAsRead();
         }
 
@@ -245,6 +257,8 @@ readerApp.controller("readerController", ["$scope", "$http", "$window", "hotkeys
         else {
           $window.open(entry.link)
         }
+
+        $scope.setOpened(entry);
 
         event.preventDefault();
       },

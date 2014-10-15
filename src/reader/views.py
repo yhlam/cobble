@@ -70,9 +70,8 @@ class EntryListAPIView(ListAPIView):
         return Entry.objects.filter(feed__subscribers=user)
 
 
-class UpdateReadAPIView(GenericAPIView):
+class UpdateEntryStateAPIView(GenericAPIView):
     queryset = Entry.objects.all()
-    read = False
     serializer_class = SuccessSerializer
     permission_classes = (IsAuthenticated,)
 
@@ -84,10 +83,30 @@ class UpdateReadAPIView(GenericAPIView):
             defaults={
                 'user': user,
                 'entry': entry,
-                'read': self.read
+                self.update_field: self.update_value
             },
         )
         return Response({'success': True})
+
+
+class SetReadAPIView(UpdateEntryStateAPIView):
+    update_field = 'read'
+    update_value = True
+
+
+class SetUnreadAPIView(UpdateEntryStateAPIView):
+    update_field = 'read'
+    update_value = False
+
+
+class SetExpandedAPIView(UpdateEntryStateAPIView):
+    update_field = 'expanded'
+    update_value = True
+
+
+class SetOpenedAPIView(UpdateEntryStateAPIView):
+    update_field = 'opened'
+    update_value = True
 
 
 class FetchAPIView(GenericAPIView):
