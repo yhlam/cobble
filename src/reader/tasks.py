@@ -185,7 +185,15 @@ def _process_entry(feed, entry):
         log.warning('Missing title, skiped entry: %s', entry)
         return
 
-    content = _get_value(entry, 'content', 'summary') or ''
+    if 'content' in entry:
+        contents = {content.type: content.value for content in entry.content}
+        content = _get_value(
+            contents,
+            'text/html',
+            'application/xhtml+xml', 'text/plain'
+        ) or content[0].value
+    else:
+        content = entry.get('summary', '')
 
     entry_timestruct = _get_value(
         entry,
