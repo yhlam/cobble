@@ -53,6 +53,7 @@ class Migration(migrations.Migration):
                 ('read', models.BooleanField(default=False)),
                 ('expanded', models.BooleanField(default=False)),
                 ('opened', models.BooleanField(default=False)),
+                ('starred', models.BooleanField(default=False)),
                 ('entry', models.ForeignKey(related_name='user_states', related_query_name='user_state', to='reader.Entry')),
                 ('user', models.ForeignKey(related_name='entry_states', related_query_name='entry_state', to=settings.AUTH_USER_MODEL)),
             ],

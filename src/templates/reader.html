@@ -73,6 +73,11 @@
         ng-click="openOrClose($index)"
         reader-scroll-to="selected == $index && !open">
         <div class="col-md-2 entry-close-feed">
+          <span
+            class="glyphicon entry-close-star"
+            ng-class="{'glyphicon-star': entry.starred, 'glyphicon-star-empty': !entry.starred}"
+            ng-click="setStarred(entry, !entry.starred); $event.stopPropagation();">
+          </span>
           <a ng-href="{{entry.feed.link}}" target="_blank">{{entry.feed.name}}</a>
         </div>
         <div class="col-md-8 entry-close-title">
@@ -108,7 +113,15 @@
             </div>
           </div>
           <div class="row entry-open-footer">
-            <div class="col-md-12">
+            <div class="col-md-2">
+              <a href="#" ng-if="!entry.starred" ng-click="setStarred(entry, true)">
+                <span class="glyphicon glyphicon-star-empty entry-open-star"></span>Star
+              </a>
+              <a href="#" ng-if="entry.starred" ng-click="setStarred(entry, false)">
+                <span class="glyphicon glyphicon-star entry-open-star"></span>Unstar
+              </a>
+            </div>
+            <div class="col-md-2">
               <a href="#" ng-if="!entry.read" ng-click="setRead(entry, true)">Mark as Read</a>
               <a href="#" ng-if="entry.read" ng-click="setRead(entry, false)">Mark as Unread</a>
             </div>

@@ -16,6 +16,10 @@ body {
     min-width: 126px;
 }
 
+.entry-close-star {
+    cursor: pointer;
+}
+
 .entry-close-feed > a {
     color: #555555;
 }
@@ -76,6 +80,10 @@ body {
 .entry-open-footer {
     border-top: #EEEEEE 1px solid;
     margin-top: 10px;
+}
+
+.entry-open-star {
+    padding-right: 5px;
 }
 
 .entry-selected {

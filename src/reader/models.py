@@ -53,6 +53,7 @@ class UserEntryState(models.Model):
     read = models.BooleanField(default=False)
     expanded = models.BooleanField(default=False)
     opened = models.BooleanField(default=False)
+    starred = models.BooleanField(default=False)
 
     def __str__(self):
         return '{} - {}'.format(self.user.username, self.entry.title)

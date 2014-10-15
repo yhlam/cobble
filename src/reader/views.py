@@ -109,6 +109,16 @@ class SetOpenedAPIView(UpdateEntryStateAPIView):
     update_value = True
 
 
+class SetStarredAPIView(UpdateEntryStateAPIView):
+    update_field = 'starred'
+    update_value = True
+
+
+class SetUnstarredAPIView(UpdateEntryStateAPIView):
+    update_field = 'starred'
+    update_value = False
+
+
 class FetchAPIView(GenericAPIView):
     serializer_class = FetchOptionSerializer
     permission_classes = (IsAdminUser,)

@@ -10,7 +10,7 @@ class FeedSerializer(serializers.ModelSerializer):
         fields = ('name', 'homepage')
 
 
-class ReadField(fields.BooleanField):
+class EntryStateField(fields.BooleanField):
     read_only = True
 
     def __init__(self, *args, **kwargs):
@@ -27,16 +27,26 @@ class ReadField(fields.BooleanField):
         except UserEntryState.DoesNotExist:
             return self.to_native(False)
         else:
-            return self.to_native(state.read)
+            source = self.source or field_name
+            value = state
+
+            for component in source.split('.'):
+                value = fields.get_component(state, component)
+                if value is None:
+                    break
+
+            return self.to_native(value)
 
 
 class EntrySerializer(serializers.ModelSerializer):
     feed = FeedSerializer(read_only=True)
-    read = ReadField()
+    read = EntryStateField()
+    starred = EntryStateField()
 
     class Meta:
         model = Entry
-        fields = ('id', 'feed', 'title', 'content', 'link', 'time', 'read')
+        fields = ('id', 'feed', 'title', 'content', 'link', 'time',
+                  'read', 'starred')
 
 
 class SuccessSerializer(serializers.Serializer):

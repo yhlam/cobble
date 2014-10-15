@@ -63,6 +63,7 @@ readerApp.controller("readerController", ["$scope", "$http", "$window", "hotkeys
             content: entry.content,
             link: entry.link,
             read: entry.read,
+            starred: entry.starred,
           });
         }
 
@@ -134,6 +135,22 @@ readerApp.controller("readerController", ["$scope", "$http", "$window", "hotkeys
     $scope.setOpened = function(entry) {
       $http.post("/api/v1/entry/" + entry.id + "/opened/");
     }
+
+    $scope.setStarred = function(entry, starred) {
+      if(entry.starred == starred) {
+        return;
+      }
+
+      if(starred) {
+        $http.post("/api/v1/entry/" + entry.id + "/star/");
+      }
+      else {
+        $http.post("/api/v1/entry/" + entry.id + "/unstar/");
+      }
+
+      entry.starred = starred;
+    }
+
 
     hotkeys.add({
       combo: "r",
@@ -270,6 +287,17 @@ readerApp.controller("readerController", ["$scope", "$http", "$window", "hotkeys
       callback: function(event) {
         var entry = $scope.entries[$scope.selected];
         $scope.setRead(entry, !entry.read);
+
+        event.preventDefault();
+      },
+    });
+
+    hotkeys.add({
+      combo: "s",
+      description: "Star / Unstar",
+      callback: function(event) {
+        var entry = $scope.entries[$scope.selected];
+        $scope.setStarred(entry, !entry.starred);
 
         event.preventDefault();
       },
