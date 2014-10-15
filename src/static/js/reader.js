@@ -19,7 +19,7 @@ readerApp.controller("readerController", ["$scope", "$http", "$window", "hotkeys
   function($scope, $http, $window, hotkeys) {
     $scope.modes = [Mode.All, Mode.Unread];
 
-    $scope.mode = Mode.All;
+    $scope.mode = Mode.Unread;
 
     $scope.initialize = function() {
       $scope.entries = [];
