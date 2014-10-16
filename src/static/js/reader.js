@@ -321,17 +321,7 @@ readerApp.directive("readerScrollTo", ["$window", "$timeout",
                 var elementTop = element.offsetTop;
                 var elementHeight = element.offsetHeight;
                 var elementBottom = elementTop + elementHeight;
-                if(elementBottom >= scrollBottom) {
-                  if(windowHeight - 60 >= elementHeight) {
-                    var scrollTo = Math.min(elementTop - windowHeight + elementHeight, scrollHeight - windowHeight);
-                    $window.scrollTo(0, scrollTo);
-                  }
-                  else {
-                    var scrollTo = Math.max(elementTop - 60, 0);
-                    $window.scrollTo(0, scrollTo);
-                  }
-                }
-                else if(elementTop < scrollTop + 60) {
+                if(elementBottom >= scrollBottom || elementTop < scrollTop + 60) {
                   var scrollTo = Math.max(elementTop - 60, 0);
                   $window.scrollTo(0, scrollTo);
                 }
