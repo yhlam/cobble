@@ -17,6 +17,13 @@ ALLOWED_HOSTS = ['*']
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+MIDDLEWARE_CLASSES = (
+    'sslify.middleware.SSLifyMiddleware',
+) + MIDDLEWARE_CLASSES
+
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
