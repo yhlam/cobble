@@ -61,3 +61,6 @@ target/
 
 # bower packages
 src/static/vendor/
+
+# djagno static files
+src/staticfiles
