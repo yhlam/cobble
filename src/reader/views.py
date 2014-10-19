@@ -144,6 +144,17 @@ class FetchAPIView(GenericAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class DestoryReadEntryAPIView(GenericAPIView):
+    serializer_class = SuccessSerializer
+    permission_classes = (IsAdminUser,)
+
+    def delete(self, request, *args, **kwargs):
+        Entry.objects.select_related('user_states').filter(
+            user_state__read=True
+        ).delete()
+        return Response({'success': True}, status=status.HTTP_204_NO_CONTENT)
+
+
 class ReaderView(LoginRequiredMixin, TemplateView):
     template_name = 'reader.html'
     login_url = reverse_lazy('login')

@@ -9,6 +9,7 @@ from .views import (
     SetStarredAPIView,
     SetUnstarredAPIView,
     FetchAPIView,
+    DestoryReadEntryAPIView,
 )
 
 
@@ -24,4 +25,6 @@ urls = patterns(
     url(r'^entry/(?P<pk>\d+)/unstar/$', SetUnstarredAPIView.as_view(), name='entry-unstar'),
 
     url(r'^fetch/$', FetchAPIView.as_view(), name='fetch'),
+
+    url(r'^entry/read/$', DestoryReadEntryAPIView.as_view(), name='entry-read-destory'),
 )
