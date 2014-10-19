@@ -1,13 +1,20 @@
+import csv
+import json
+
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import REDIRECT_FIELD_NAME, login, logout
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db.models import Q
+from django.http import StreamingHttpResponse
 from django.views.generic import TemplateView, RedirectView
 from django.views.generic.edit import FormView
+from django.views.generic.list import BaseListView
 from django.utils.http import is_safe_url
 
 import django_filters
-from braces.views import AnonymousRequiredMixin, LoginRequiredMixin
+from braces.views import (
+    AnonymousRequiredMixin, LoginRequiredMixin, SuperuserRequiredMixin,
+)
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field
 from crispy_forms.bootstrap import StrictButton
@@ -19,7 +26,8 @@ from rest_framework import ISO_8601
 from rest_framework import status
 
 from utils.filters import IsoDateTimeFilter
-from .models import Entry
+from utils.io import EchoWriter
+from .models import Entry, UserEntryState
 from .serializers import (
     EntrySerializer, SuccessSerializer, FetchOptionSerializer
 )
@@ -191,3 +199,43 @@ class LogoutView(RedirectView):
     def get(self, request, *args, **kwargs):
         logout(request)
         return super().get(request, *args, **kwargs)
+
+
+class StatExportView(LoginRequiredMixin, SuperuserRequiredMixin, BaseListView):
+    login_url = reverse_lazy('login')
+    context_object_name = 'user_entry_states'
+    queryset = UserEntryState.objects.select_related(
+        'user', 'entry', 'entry__feed'
+    )
+
+    def render_to_response(self, context):
+        pseudo_buffer = EchoWriter()
+        writer = csv.writer(pseudo_buffer)
+        rows = self.get_csv_rows(context[self.context_object_name])
+        response = StreamingHttpResponse(
+            (writer.writerow(row) for row in rows),
+            content_type="text/csv")
+        response['Content-Disposition'] = ('attachment; '
+                                           'filename="stat.csv"')
+        return response
+
+    def get_csv_rows(self, user_entry_states):
+        yield (
+            'feed_name', 'feed_url',
+            'entry_title', 'entry_url', 'entry_content', 'entry_time',
+            'entry_details',
+            'username',
+            'read', 'expanded', 'opened', 'starred'
+        )
+
+        for state in user_entry_states:
+            entry = state.entry
+            feed = entry.feed
+            yield (
+                feed.name, feed.url,
+                entry.title, entry.link, entry.content,
+                entry.time.strftime('%Y-%m-%d %H:%M:%S %z'),
+                json.dumps(entry.json),
+                state.user.username,
+                state.read, state.expanded, state.opened, state.starred,
+            )

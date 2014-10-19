@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
-from reader.views import ReaderView, LoginView, LogoutView
+from reader.views import ReaderView, LoginView, LogoutView, StatExportView
 from reader import api as reader_api
 
 urlpatterns = patterns(
@@ -17,6 +17,8 @@ urlpatterns = patterns(
 
     url(r'^login/$', LoginView.as_view(), name='login'),
     url(r'^logout/$', LogoutView.as_view(), name='logout'),
+
+    url(r'stat/$', StatExportView.as_view(), name='stat'),
 
     url(r'^$', ReaderView.as_view(), name='reader'),
 )

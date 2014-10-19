@@ -36,6 +36,7 @@
         {% if user.is_active and user.is_superuser %}
           <ul class="nav navbar-nav">
             <li><a href="{% url 'admin:index' %}">Admin</a></li>
+            <li><a href="{% url 'stat' %}" target="_blank">Stat</a></li>
           </ul>
         {% endif %}
         <ul class="nav navbar-nav navbar-right">
