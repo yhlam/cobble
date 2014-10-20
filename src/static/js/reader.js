@@ -20,6 +20,7 @@ readerApp.controller("readerController", ["$scope", "$http", "$window", "hotkeys
     $scope.modes = [Mode.All, Mode.Unread];
 
     $scope.mode = Mode.Unread;
+    $scope.navbarCollapsed = true;
 
     $scope.initialize = function() {
       $scope.entries = [];
