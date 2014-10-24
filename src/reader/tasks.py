@@ -203,7 +203,7 @@ def _process_entry(feed, entry):
 
     entry_id = entry.get('id', link)
 
-    Entry.objects.get_or_create(
+    Entry.objects.update_or_create(
         feed=feed,
         entry_id=entry_id,
         defaults={
