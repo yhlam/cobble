@@ -12,6 +12,7 @@ from aiohttp.errors import ConnectionError, HttpException
 from celery import shared_task
 import feedparser
 
+from recommendation.tasks import prioritize
 from .models import Feed, Entry
 
 
@@ -49,7 +50,9 @@ def _load_feed_async(feed, loop=None):
         log.exception('Failed to fetch entries for feed %s', feed)
     else:
         if response:
-            _process_entries(feed, *response)
+            entries = _process_entries(feed, *response)
+            if entries:
+                prioritize.delay([entry.id for entry in entries])
 
 
 @asyncio.coroutine
@@ -160,9 +163,11 @@ def _process_entries(feed, etag, last_modified, entries):
     feed.save()
 
     success = 0
+    entry_models = []
     for entry in entries:
         try:
-            _process_entry(feed, entry)
+           entry_model =  _process_entry(feed, entry)
+           entry_models.append(entry_model)
         except Exception:
             log.exception('Encounter exception while processing entry: %s',
                           entry)
@@ -170,6 +175,7 @@ def _process_entries(feed, etag, last_modified, entries):
             success += 1
 
     log.info('Updated %d entries for %s', success, feed)
+    return entry_models
 
 
 def _process_entry(feed, entry):
@@ -203,7 +209,7 @@ def _process_entry(feed, entry):
 
     entry_id = entry.get('id', link)
 
-    Entry.objects.update_or_create(
+    entry_model, _ = Entry.objects.update_or_create(
         feed=feed,
         entry_id=entry_id,
         defaults={
@@ -214,6 +220,8 @@ def _process_entry(feed, entry):
             'json': entry,
         }
     )
+
+    return entry_model
 
 
 def _get_value(entry, *fields):

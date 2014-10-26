@@ -30,6 +30,7 @@ INSTALLED_APPS = (
     'kombu.transport.django',
 
     'reader',
+    'recommendation',
     'utils',
 )
 
