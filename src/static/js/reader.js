@@ -8,6 +8,11 @@ var Mode = {
   Unread: "Unread Only",
 }
 
+var Sorting = {
+  Time: "Sort by Time",
+  Intelligence: "Sort by Intelligence",
+}
+
 
 readerApp.config(['$httpProvider', function($httpProvider) {
   $httpProvider.defaults.xsrfCookieName = 'csrftoken';
@@ -18,8 +23,10 @@ readerApp.config(['$httpProvider', function($httpProvider) {
 readerApp.controller("readerController", ["$scope", "$http", "$window", "hotkeys",
   function($scope, $http, $window, hotkeys) {
     $scope.modes = [Mode.All, Mode.Unread];
+    $scope.sortings = [Sorting.Time, Sorting.Intelligence];
 
     $scope.mode = Mode.Unread;
+    $scope.sorting = Sorting.Intelligence;
     $scope.navbarCollapsed = true;
 
     $scope.initialize = function() {
@@ -48,6 +55,7 @@ readerApp.controller("readerController", ["$scope", "$http", "$window", "hotkeys
           offset: $scope.offset,
           limit: 50,
           read: $scope.mode === Mode.Unread ? "False" : undefined,
+          prioritize: $scope.sorting === Sorting.Intelligence ? "True" : undefined,
         },
       }).success(function(data) {
         var i, entry;
@@ -100,6 +108,12 @@ readerApp.controller("readerController", ["$scope", "$http", "$window", "hotkeys
       $scope.mode = mode;
       $scope.refresh();
     }
+
+    $scope.setSorting = function(sorting) {
+      $scope.sorting = sorting;
+      $scope.refresh();
+    }
+
 
     $scope.setRead = function(entry, read) {
       if(entry.read == read) {

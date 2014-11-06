@@ -48,6 +48,13 @@ class EntryFilterSet(django_filters.FilterSet):
         ),
     )
 
+    prioritize = django_filters.BooleanFilter(
+        action=lambda qs, value: (
+            qs.order_by('-userentrypriority__priority', '-time') if value
+            else qs
+        ),
+    )
+
     offset = django_filters.NumberFilter(
         decimal_places=0,
         min_value=0,
@@ -64,7 +71,7 @@ class EntryFilterSet(django_filters.FilterSet):
 
     class Meta:
         model = Entry
-        fields = ['last_updated', 'read', 'offset', 'limit']
+        fields = ['last_updated', 'read', 'prioritize', 'offset', 'limit']
 
 
 class EntryListAPIView(ListAPIView):
@@ -75,7 +82,10 @@ class EntryListAPIView(ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return Entry.objects.filter(feed__subscribers=user)
+        return Entry.objects.filter(
+            Q(feed__subscribers=user),
+            Q(userentrypriority=None) | Q(userentrypriority__user=user),
+        )
 
 
 class UpdateEntryStateAPIView(GenericAPIView):
