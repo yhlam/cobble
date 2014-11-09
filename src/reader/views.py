@@ -18,7 +18,9 @@ from braces.views import (
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field
 from crispy_forms.bootstrap import StrictButton
-from rest_framework.generics import ListAPIView, GenericAPIView
+from rest_framework.generics import (
+    GenericAPIView, ListAPIView, RetrieveAPIView,
+)
 from rest_framework.filters import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
@@ -27,9 +29,13 @@ from rest_framework import status
 
 from utils.filters import IsoDateTimeFilter
 from utils.io import EchoWriter
-from .models import Entry, UserEntryState
+from .forms import UserConfigUpdateForm
+from .models import Entry, UserConfig, UserEntryState
 from .serializers import (
-    EntrySerializer, SuccessSerializer, FetchOptionSerializer
+    EntrySerializer,
+    UserConfigSerializer,
+    SuccessSerializer,
+    FetchOptionSerializer
 )
 from . import tasks
 
@@ -79,6 +85,25 @@ class EntryListAPIView(ListAPIView):
     filter_class = EntryFilterSet
     filter_backends = (DjangoFilterBackend,)
     permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        response = super().get(request, *args, **kwargs)
+        params = {
+            'read': request.QUERY_PARAMS.get('read', True),
+            'prioritize': request.QUERY_PARAMS.get('prioritize', False),
+        }
+        config_update_form = UserConfigUpdateForm(params)
+        if config_update_form.is_valid():
+            data = config_update_form.cleaned_data
+            UserConfig.objects.update_or_create(
+                user=self.request.user,
+                defaults={
+                    'mode': 'A' if data['read'] else 'U',
+                    'sorting': 'I' if data['prioritize'] else 'T',
+                }
+            )
+
+        return response
 
     def get_queryset(self):
         user = self.request.user
@@ -135,6 +160,26 @@ class SetStarredAPIView(UpdateEntryStateAPIView):
 class SetUnstarredAPIView(UpdateEntryStateAPIView):
     update_field = 'starred'
     update_value = False
+
+
+class RetrieveUserConfigAPIView(RetrieveAPIView):
+    serializer_class = UserConfigSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self, queryset=None):
+        user = self.request.user
+
+        if queryset is None:
+            queryset = UserConfig.objects.filter(user=user)
+
+        config, _ = queryset.get_or_create(
+            defaults={'mode': 'A', 'sorting': 'T'}
+        )
+
+        # May raise a permission denied
+        self.check_object_permissions(self.request, config)
+
+        return config
 
 
 class FetchAPIView(GenericAPIView):

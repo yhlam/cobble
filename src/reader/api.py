@@ -8,6 +8,7 @@ from .views import (
     SetOpenedAPIView,
     SetStarredAPIView,
     SetUnstarredAPIView,
+    RetrieveUserConfigAPIView,
     FetchAPIView,
     DestoryReadEntryAPIView,
 )
@@ -23,6 +24,8 @@ urls = patterns(
     url(r'^entry/(?P<pk>\d+)/opened/$', SetOpenedAPIView.as_view(), name='entry-opened'),
     url(r'^entry/(?P<pk>\d+)/star/$', SetStarredAPIView.as_view(), name='entry-star'),
     url(r'^entry/(?P<pk>\d+)/unstar/$', SetUnstarredAPIView.as_view(), name='entry-unstar'),
+
+    url(r'^config/$', RetrieveUserConfigAPIView.as_view(), name='config'),
 
     url(r'^fetch/$', FetchAPIView.as_view(), name='fetch'),
 

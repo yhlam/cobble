@@ -1,7 +1,7 @@
 from rest_framework import fields
 from rest_framework import serializers
 
-from .models import Entry, Feed, UserEntryState
+from .models import Entry, Feed, UserEntryState, UserConfig
 
 
 class FeedSerializer(serializers.ModelSerializer):
@@ -47,6 +47,13 @@ class EntrySerializer(serializers.ModelSerializer):
         model = Entry
         fields = ('id', 'feed', 'title', 'content', 'link', 'time',
                   'read', 'starred')
+
+
+class UserConfigSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserConfig
+        fields = ('mode', 'sorting', 'user',)
+        write_only_fields = ('user',)
 
 
 class SuccessSerializer(serializers.Serializer):

@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Entry',
             fields=[
-                ('id', models.AutoField(primary_key=True, auto_created=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, verbose_name='ID', serialize=False, primary_key=True)),
                 ('entry_id', models.CharField(max_length=1024)),
                 ('title', models.CharField(max_length=1024)),
                 ('content', models.TextField()),
@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Feed',
             fields=[
-                ('id', models.AutoField(primary_key=True, auto_created=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, verbose_name='ID', serialize=False, primary_key=True)),
                 ('name', models.CharField(max_length=1024)),
                 ('url', models.URLField()),
                 ('homepage', models.URLField()),
@@ -47,15 +47,27 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
+            name='UserConfig',
+            fields=[
+                ('id', models.AutoField(auto_created=True, verbose_name='ID', serialize=False, primary_key=True)),
+                ('mode', models.CharField(choices=[('A', 'All Items'), ('U', 'Unread Only')], default='A', max_length=1)),
+                ('sorting', models.CharField(choices=[('T', 'Time'), ('I', 'Intelligence')], default='T', max_length=1)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
             name='UserEntryState',
             fields=[
-                ('id', models.AutoField(serialize=False, primary_key=True, auto_created=True, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, verbose_name='ID', serialize=False, primary_key=True)),
                 ('read', models.BooleanField(default=False)),
                 ('expanded', models.BooleanField(default=False)),
                 ('opened', models.BooleanField(default=False)),
                 ('starred', models.BooleanField(default=False)),
-                ('entry', models.ForeignKey(related_name='user_states', related_query_name='user_state', to='reader.Entry')),
-                ('user', models.ForeignKey(related_name='entry_states', related_query_name='entry_state', to=settings.AUTH_USER_MODEL)),
+                ('entry', models.ForeignKey(to='reader.Entry', related_name='user_states', related_query_name='user_state')),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, related_name='entry_states', related_query_name='entry_state')),
             ],
             options={
             },

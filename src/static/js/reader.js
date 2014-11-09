@@ -3,15 +3,49 @@
 
 var readerApp = angular.module("readerApp", ["ngSanitize", "infinite-scroll", "angularMoment", "cfp.hotkeys", "ui.bootstrap"]);
 
-var Mode = {
-  All: "All Item",
-  Unread: "Unread Only",
+
+var Constants = function(choices) {
+  var name_mapping = {};
+  var key_mapping = {};
+
+  choices.forEach(function(choice) {
+    name_mapping[choice.name] = choice;
+    key_mapping[choice.key] = choice;
+  });
+
+  var constants = Object.create(name_mapping);
+  constants.fromKey = function(key) {
+    return key_mapping[key];
+  };
+
+  return constants;
 }
 
-var Sorting = {
-  Time: "Sort by Time",
-  Intelligence: "Sort by Intelligence",
-}
+var Mode = Constants([
+  {
+    key: "A",
+    name: "All",
+    description: "All Items",
+  },
+  {
+    key: "U",
+    name: "Unread",
+    description: "Unread Only",
+  },
+]);
+
+var Sorting = Constants([
+  {
+    key: "T",
+    name: "Time",
+    description: "Sort by Time",
+  },
+  {
+    key: "I",
+    name: "Intelligence",
+    description: "Sort by Intelligence",
+  },
+]);
 
 
 readerApp.config(['$httpProvider', function($httpProvider) {
@@ -29,6 +63,8 @@ readerApp.controller("readerController", ["$scope", "$http", "$window", "hotkeys
     $scope.sorting = Sorting.Intelligence;
     $scope.navbarCollapsed = true;
 
+    $scope.initialized = false;
+
     $scope.initialize = function() {
       $scope.entries = [];
       $scope.loading = false;
@@ -37,12 +73,23 @@ readerApp.controller("readerController", ["$scope", "$http", "$window", "hotkeys
       $scope.selected = 0;
       $scope.open = false;
       $scope.last_updated = undefined;
+      $scope.initialized = true;
     }
 
-    $scope.initialize();
+    $http.get("/api/v1/config/").
+      success(function(data) {
+        $scope.mode = Mode.fromKey(data.mode);
+        $scope.sorting = Sorting.fromKey(data.sorting);
+        $scope.refresh();
+      }).
+      error(function(data) {
+        $scope.mode = Mode.All;
+        $scope.sorting = Sorting.Time;
+        $scope.refresh();
+      });
 
     $scope.poll = function() {
-      if($scope.loading || $scope.done) {
+      if(!$scope.initialized || $scope.loading || $scope.done) {
         return;
       }
       $scope.loading = true;

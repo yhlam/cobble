@@ -57,3 +57,22 @@ class UserEntryState(models.Model):
 
     def __str__(self):
         return '{} - {}'.format(self.user.username, self.entry.title)
+
+
+class UserConfig(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    mode = models.CharField(
+        max_length=1,
+        choices=(('A', 'All Items'), ('U', 'Unread Only')),
+        default='A',
+    )
+    sorting = models.CharField(
+        max_length=1,
+        choices=(('T', 'Time'), ('I', 'Intelligence')),
+        default='T',
+    )
+
+    def __str__(self):
+        return 'user={}, mode={}, sorting={}'.format(
+            self.user.username, self.mode, self.sorting
+        )
